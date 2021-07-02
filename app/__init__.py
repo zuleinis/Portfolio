@@ -2,14 +2,38 @@ import os
 import json
 from flask import Flask, render_template, send_from_directory, request
 from dotenv import load_dotenv
-from . import db
+# from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.db import get_db
+# from app.db import get_db
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 load_dotenv()
 app = Flask(__name__)
-app.config['DATABASE'] = os.path.join(os.getcwd(), 'flask.sqlite')
-db.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://{user}:{passwd}@{host}:{port}/{table}'.format(
+    user=os.getenv('POSTGRES_USER'),
+    passwd=os.getenv('POSTGRES_PASSWORD'),
+    host=os.getenv('POSTGRES_HOST'),
+    port=5432,
+    table=os.getenv('POSTGRES_DB'))
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+class UserModel(db.Model):
+    __tablename__ = 'users'
+
+    username = db.Column(db.String(), primary_key=True)
+    password = db.Column(db.String())
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+    def __repr__(self):
+        return f"<User {self.username}>"
 
 f = open("./lavina.json")
 data = json.load(f)
@@ -55,14 +79,7 @@ def accomplishments():
 
 @app.route("/health")
 def health():
-    return render_template(
-        "data.html",
-        data=data,
-        main="Projects",
-        side1="Experience",
-        side2="Accomplishments",
-        url=os.getenv("URL"),
-    )
+    return "Works"
 
 @app.route("/register", methods=('GET', 'POST'))
 def register():
