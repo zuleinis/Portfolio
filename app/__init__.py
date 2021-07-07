@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, render_template, send_from_directory, request, url_for
+from flask import Flask, render_template, send_from_directory, request
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
