@@ -19,6 +19,8 @@ body {
   grid-template-columns: 50% 50%;
   grid-template-rows: 60px auto auto;
   grid-template-areas: "header header" "profile profile" "technical experiences";
+  align-items: center;
+  justify-items: center;
 }
 
 .body-content {
